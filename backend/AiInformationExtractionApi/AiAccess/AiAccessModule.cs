@@ -13,8 +13,10 @@ public static class AiAccessModule
     [Experimental("MEAI001")]
     public static IServiceCollection AddAiAccess(this IServiceCollection services)
     {
+        // AI Options
         services.AddSingleton(sp => AiOptions.FromConfiguration(sp.GetRequiredService<IConfiguration>()));
 
+        // AI Chat Client
         services
            .AddChatClient(sp =>
                 {
@@ -32,6 +34,7 @@ public static class AiAccessModule
            .UseOpenTelemetry();
         services.AddScoped<IAiChatClient, MeaChatClient>();
 
+        // AI Speech to Text Client
         services
            .AddSpeechToTextClient(sp =>
                 {

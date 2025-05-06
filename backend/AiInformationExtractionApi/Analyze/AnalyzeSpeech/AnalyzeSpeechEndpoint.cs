@@ -58,7 +58,7 @@ public static class AnalyzeSpeechEndpoint
             return TypedResults.BadRequest(e.Message);
         }
 
-        var text = await audioClient.TranscribeAudioAsync(processingResults.AudioFilePath);
+        var text = await audioClient.TranscribeAudioAsync(processingResults.AudioFilePath, cancellationToken);
 
         var additionalInformation = processingResults.Dto.ExistingDamageReportData.CreateAdditionalPromptInformation();
         var messages = promptManager.CreateTextAnalysisPrompt(
@@ -162,8 +162,5 @@ public static class AnalyzeSpeechEndpoint
         return boundary.ToString();
     }
 
-    private readonly record struct ProcessingResults(
-        AnalyzeSpeechRequestDto Dto,
-        string AudioFilePath
-    );
+    private readonly record struct ProcessingResults(AnalyzeSpeechRequestDto Dto, string AudioFilePath);
 }

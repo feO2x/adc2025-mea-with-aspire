@@ -27,7 +27,7 @@ public static class TextCompletionExtensions
         var now = clock.GetTime();
         var response = await aiChatClient.CompleteChatAsync(messages, cancellationToken);
         var responseText = response.Text;
-        logger.Debug("Received response from Open AI analysis\n{Response}", responseText);
+        logger.Debug("Received response from AI analysis\n{AiResponse}", responseText);
         using var jsonDocument = Json.ParseDocument(responseText);
         return TypedResults.Ok(
             new AnalysisResponseDto(

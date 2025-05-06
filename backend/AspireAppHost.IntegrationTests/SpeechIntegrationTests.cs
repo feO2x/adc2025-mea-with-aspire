@@ -63,7 +63,7 @@ public sealed class SpeechIntegrationTests
                 CarColor = "Grey",
                 CarType = "BMW X3",
                 Passengers = [new PersonDto { FirstName = "Anna", LastName = "Smith" }],
-                ReasonOfTravel = "Shopping at the supermarket"
+                ReasonOfTravel = "Shopping at supermarket"
             }
         );
         result.Should().Be(expectedResponse);
