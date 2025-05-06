@@ -7,10 +7,10 @@ namespace AiInformationExtractionApi.AiAccess;
 
 public sealed record AiOptions
 {
-    public string TextVisionConnectionString { get; init; } = "OpenAI";
+    public string TextVisionService { get; init; } = "OpenAI";
     public string TextVisionModel { get; init; } = "gpt-4.1";
 
-    public string AudioTranscriptionConnectionString { get; init; } = "OpenAI";
+    public string AudioTranscriptionService { get; init; } = "OpenAI";
     public string AudioTranscriptionModel { get; init; } = "whisper-1";
     public string ApiKey { get; init; } = string.Empty;
 
@@ -24,7 +24,7 @@ public sealed record AiOptions
             return options;
         }
 
-        var errorMessage = $"OpenAI options are invalid{Environment.NewLine}{validationResults}";
+        var errorMessage = $"AiOptions are invalid{Environment.NewLine}{validationResults}";
         throw new InvalidConfigurationException(errorMessage);
     }
 }

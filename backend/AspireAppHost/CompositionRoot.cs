@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using Microsoft.Extensions.Configuration;
 using Projects;
 using Shared;
 using Shared.CompositionRoot;
@@ -7,14 +8,11 @@ namespace AspireAppHost;
 
 public static class CompositionRoot
 {
-    public static IDistributedApplicationBuilder Configure(this IDistributedApplicationBuilder builder)
+    public static IDistributedApplicationBuilder ConfigureServices(this IDistributedApplicationBuilder builder)
     {
         builder.Services.AddDefaultLogging(builder.Configuration);
-        return builder;
-    }
+        var appHostOptions = builder.Configuration.GetSection("appHost").Get<AppHostOptions>() ?? new AppHostOptions();
 
-    public static IDistributedApplicationBuilder SetUpProjectStructure(this IDistributedApplicationBuilder builder)
-    {
         var gateway = builder.AddProject<Gateway>(Constants.GatewayName);
         var identityServer = builder.AddProject<IdentityServer>(Constants.IdentityServerName);
         var postgresServer = builder.AddPostgres(Constants.PostgresServerName);
@@ -34,6 +32,21 @@ public static class CompositionRoot
            .WaitFor(identityServer)
            .WithReference(aiInformationExtractionDatabase)
            .WithReference(identityServer);
+
+        if (appHostOptions.RunOllama)
+        {
+            var ollamaServer = builder
+               .AddOllama("ollama")
+               .WithDataVolume("ollama-data")
+               .WithGPUSupport()
+               .WithOpenWebUI();
+            var aiModel = ollamaServer.AddModel("llama", "llama3.2-vision:11b");
+
+            aiInformationExtractionApi
+               .WithReference(aiModel)
+               .WithEnvironment("AI__TextVisionService", "Ollama")
+               .WithEnvironment("AI__TextVisionModel", "llama");
+        }
 
         identityServer.WithReference(gateway);
         gateway

@@ -6,8 +6,10 @@ using AiInformationExtractionApi.AiAccess;
 using AiInformationExtractionApi.Analyze.Prompting;
 using FluentAssertions;
 using Light.Xunit;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OpenAI.Chat;
 using Serilog;
 using Shared.JsonAccess;
 using Shared.Messages.Analyze;
@@ -28,12 +30,18 @@ public sealed class AiIntegrationTests : IAsyncLifetime
     {
         _output = output;
         var serilogLogger = output.CreateTestLogger();
-        _serviceProvider = new ServiceCollection()
+        var services = new ServiceCollection()
            .AddLogging(logging => logging.AddSerilog(serilogLogger))
            .AddSingleton(TestSettings.Configuration)
-           .AddAiAccess()
-           .AddPromptingModule()
-           .BuildServiceProvider();
+           .AddSingleton(sp => AiOptions.FromConfiguration(sp.GetRequiredService<IConfiguration>()))
+           .AddPromptingModule();
+        services.AddChatClient(sp =>
+            {
+                var options = sp.GetRequiredService<AiOptions>();
+                return new ChatClient(options.TextVisionModel, options.ApiKey).AsIChatClient();
+            }
+        );
+        _serviceProvider = services.BuildServiceProvider();
         _scope = _serviceProvider.CreateAsyncScope();
     }
 

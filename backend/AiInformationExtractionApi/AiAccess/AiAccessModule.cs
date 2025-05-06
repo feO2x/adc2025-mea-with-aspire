@@ -1,8 +1,10 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using OpenAI.Audio;
 using OpenAI.Chat;
 
@@ -11,27 +13,31 @@ namespace AiInformationExtractionApi.AiAccess;
 public static class AiAccessModule
 {
     [Experimental("MEAI001")]
-    public static IServiceCollection AddAiAccess(this IServiceCollection services)
+    public static WebApplicationBuilder AddAiAccess(this WebApplicationBuilder builder)
     {
+        var services = builder.Services;
         // AI Options
-        services.AddSingleton(sp => AiOptions.FromConfiguration(sp.GetRequiredService<IConfiguration>()));
+        var aiOptions = AiOptions.FromConfiguration(builder.Configuration);
+        services.AddSingleton(aiOptions);
 
         // AI Chat Client
-        services
-           .AddChatClient(sp =>
-                {
-                    var options = sp.GetRequiredService<AiOptions>();
-                    return string.Equals(
-                        options.TextVisionConnectionString,
-                        "OpenAI",
-                        StringComparison.OrdinalIgnoreCase
-                    ) ?
-                        new ChatClient(options.TextVisionModel, options.ApiKey).AsIChatClient() :
-                        new OllamaChatClient(options.TextVisionConnectionString, options.TextVisionModel);
-                }
-            )
-           .UseLogging()
-           .UseOpenTelemetry();
+        if (string.Equals(aiOptions.TextVisionService, "OpenAI", StringComparison.OrdinalIgnoreCase))
+        {
+            services
+               .AddChatClient(new ChatClient(aiOptions.TextVisionModel, aiOptions.ApiKey).AsIChatClient())
+               .UseLogging()
+               .UseOpenTelemetry();
+        }
+        else
+        {
+            builder
+               .AddOllamaApiClient(aiOptions.TextVisionModel)
+               .AddChatClient()
+               .UseLogging()
+               .UseOpenTelemetry();
+        }
+
+        services.AddSingleton(sp => AiOptions.FromConfiguration(sp.GetRequiredService<IConfiguration>()));
         services.AddScoped<IAiChatClient, MeaChatClient>();
 
         // AI Speech to Text Client
@@ -45,6 +51,6 @@ public static class AiAccessModule
            .UseLogging();
         services.AddSingleton<IAiAudioClient, MeaAudioClient>();
 
-        return services;
+        return builder;
     }
 }

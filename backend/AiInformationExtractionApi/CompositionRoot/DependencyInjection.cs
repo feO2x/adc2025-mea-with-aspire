@@ -18,6 +18,7 @@ public static class DependencyInjection
     {
         builder.ConfigureDefaultLogging();
         builder.AddDatabaseAccess();
+        builder.AddAiAccess();
 
         builder
            .Services
@@ -26,7 +27,6 @@ public static class DependencyInjection
            .AddDefaultHttpJsonOptions()
            .AddOpenTelemetryMetricsAndTracing(builder.Configuration)
            .AddJwtAuth(builder.Configuration)
-           .AddAiAccess()
            .AddOpenApiSupport()
            .AddAnalyzeModule()
            .AddMediaModule();

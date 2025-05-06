@@ -15,8 +15,7 @@ public static class Program
         {
             await using var distributedApp = DistributedApplication
                .CreateBuilder(args)
-               .Configure()
-               .SetUpProjectStructure()
+               .ConfigureServices()
                .Build();
 
             await distributedApp.RunAsync();

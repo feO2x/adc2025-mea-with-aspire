@@ -7,6 +7,8 @@
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.2.0" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="9.2.0" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.2.0" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.Ollama" Version="9.4.1-beta.280" />
+    <PackageVersion Include="CommunityToolkit.Aspire.OllamaSharp" Version="9.4.1-beta.280" />
     <PackageVersion Include="Duende.AccessTokenManagement" Version="3.2.0" />
     <PackageVersion Include="Duende.AccessTokenManagement.OpenIdConnect" Version="3.2.0" />
     <PackageVersion Include="Duende.IdentityServer" Version="7.2.1" />
