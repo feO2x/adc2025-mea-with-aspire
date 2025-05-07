@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Light.GuardClauses.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,17 @@ public static class AiAccessModule
         {
             services
                .AddChatClient(new ChatClient(aiOptions.TextVisionModel, aiOptions.ApiKey).AsIChatClient())
+               .UseLogging()
+               .UseOpenTelemetry();
+        }
+
+        if (string.Equals(aiOptions.TextVisionService, "MeaOllama", StringComparison.OrdinalIgnoreCase))
+        {
+            var connectionString =
+                builder.Configuration.GetConnectionString("MeaOllama") ??
+                throw new InvalidConfigurationException("Connection string 'MeaOllama' is missing.");
+            services
+               .AddChatClient(new OllamaChatClient(connectionString, aiOptions.TextVisionModel))
                .UseLogging()
                .UseOpenTelemetry();
         }
