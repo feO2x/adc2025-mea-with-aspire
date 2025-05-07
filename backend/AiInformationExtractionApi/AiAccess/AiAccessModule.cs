@@ -29,8 +29,7 @@ public static class AiAccessModule
                .UseLogging()
                .UseOpenTelemetry();
         }
-
-        if (string.Equals(aiOptions.TextVisionService, "MeaOllama", StringComparison.OrdinalIgnoreCase))
+        else if (string.Equals(aiOptions.TextVisionService, "MeaOllama", StringComparison.OrdinalIgnoreCase))
         {
             var connectionString =
                 builder.Configuration.GetConnectionString("MeaOllama") ??
