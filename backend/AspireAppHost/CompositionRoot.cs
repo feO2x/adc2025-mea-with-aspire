@@ -38,6 +38,7 @@ public static class CompositionRoot
             var ollamaServer = builder
                .AddOllama("ollama")
                .WithDataVolume("ollama-data")
+               .WithImageTag("0.6.8")
                .WithGPUSupport()
                .WithOpenWebUI();
             var aiModel = ollamaServer.AddModel("llama", "llama3.2-vision:11b");
