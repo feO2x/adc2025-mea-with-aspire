@@ -4,6 +4,7 @@
 bin/
 obj/
 audio/
+backend/IdentityServer/keys/
 *.user
 *.suo
 appsettings.*.json
