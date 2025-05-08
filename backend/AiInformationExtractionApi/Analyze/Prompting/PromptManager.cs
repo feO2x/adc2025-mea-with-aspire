@@ -23,7 +23,7 @@ public sealed class PromptManager
             "zipCode": "9245",
             "location": "Smalltown",
             "insuranceId": "QY-3942890",
-            "dateOfBirth": "1992-06-23T00:00:00Z",
+            "dateOfBirth": "1992-06-23",
             "telephone": "+31 32482-3996",
             "email": "john.doe@gmail.com",
             "licensePlate": "6CB-724"
